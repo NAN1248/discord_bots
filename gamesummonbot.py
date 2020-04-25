@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import random
 import asyncio
 from collections import defaultdict, Counter
-import sched
+#import sched
 import time
 
 load_dotenv()
@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix='!')
 
 message_dict = defaultdict(Counter)
 user_list = list()
-s = sched.scheduler(time.time, time.sleep)
+#s = sched.scheduler(time.time, time.sleep)
 
 
 @bot.event
@@ -54,6 +54,22 @@ async def b99(ctx):
 async def poll(ctx, game, time: int):
     global message_dict
     message = await ctx.send("react to play {} in {}".format(game, time))
+    #s.enter()
+    # todo: Make canceling less garbage
+    
+    await asyncio.sleep(time)
+    await notify(ctx, message.id)
+
+
+async def notify(ctx, m_id):
+    global message_dict
+
+    user_set = message_dict[m_id].keys()
+    user_tags = " ".join([user.mention for user in user_set])
+    
+    await ctx.send("It's Game Time! " + user_tags)
+    del message_dict[m_id]
+ 
 
 '''
 @bot.command(name='summon')
