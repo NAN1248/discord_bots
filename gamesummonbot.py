@@ -1,16 +1,16 @@
 import os
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import random
 import asyncio
 from collections import defaultdict, Counter
 #import sched
 import time
 
-load_dotenv()
+#load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
+#GUILD = os.getenv('DISCORD_GUILD')
 
 bot = commands.Bot(command_prefix='!')
 
@@ -92,6 +92,7 @@ async def is_valid_summon(m_id):
         return False
     return True
 
+bot.run(TOKEN)
 '''
 @bot.command(name='summon')
 async def poll(ctx, game, time: int):
@@ -133,4 +134,3 @@ async def b99(ctx):
 
 
 
-bot.run(TOKEN)
