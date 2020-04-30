@@ -10,7 +10,7 @@ import time
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
+# GUILD = os.getenv('DISCORD_GUILD')
 
 bot = commands.Bot(command_prefix='!')
 
@@ -36,6 +36,7 @@ async def on_reaction_add(reaction, user):
         m_id = reaction.message.id
         if await is_valid_summon(m_id):
             message_dict[reaction.message.id][user] += 1
+
         # user_list.append(user.mention)
 
 
@@ -48,8 +49,9 @@ async def poll(ctx, game, time: int):
     idx_to_message[idx] = message
     #s.enter()
     # todo: Make canceling less garbage
-    
+    print("entered waiting for {}".format(time))
     await asyncio.sleep(time)
+    print('finsihed sleep')
     await notify(ctx, message.id)
 
 @bot.command(name='cancel')
@@ -81,17 +83,30 @@ async def notify(ctx, m_id):
 
     user_set = message_dict[m_id].keys()
     user_tags = " ".join([user.mention for user in user_set])
-    
+    print("in notify")
     await ctx.send("It's Game Time! " + user_tags)
+    for key, val in zip(idx_to_message.keys(), idx_to_message.values()):
+        if val.id == m_id:
+            del idx_to_message[key]
+            break
     del message_dict[m_id]
 
 async def is_valid_summon(m_id):
     global idx_to_message
 
-    if m_id not in idx_to_message.keys():
+    print("is_valid {}".format(m_id))
+    valid_mids = set()
+    for m in idx_to_message.values():
+        valid_mids.add(m.id)
+
+    if m_id not in valid_mids:
+        print("invalid")
+        del valid_mids
         return False
+    del valid_mids
     return True
 
+bot.run(TOKEN)
 '''
 @bot.command(name='summon')
 async def poll(ctx, game, time: int):
@@ -133,4 +148,3 @@ async def b99(ctx):
 
 
 
-bot.run(TOKEN)
