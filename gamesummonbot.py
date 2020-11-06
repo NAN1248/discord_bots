@@ -11,7 +11,7 @@ import time
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 # GUILD = os.getenv('DISCORD_GUILD')
-
+# TODO Add event class to store instead of these globals
 bot = commands.Bot(command_prefix='!')
 
 message_dict = defaultdict(Counter)
