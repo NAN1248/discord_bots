@@ -1,14 +1,14 @@
 import os
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import random
 import asyncio
 from collections import defaultdict, Counter
 #import sched
 import time
 
-load_dotenv()
+# load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 # GUILD = os.getenv('DISCORD_GUILD')
 # TODO Add event class to store instead of these globals
@@ -41,16 +41,19 @@ async def on_reaction_add(reaction, user):
 
 
 @bot.command(name='summon')
-async def poll(ctx, game, time: int):
+async def poll(ctx, game, time: float, min_players: int = 0):
     global message_dict
     global idx_to_message
     idx = random.randint(100000,999999)
-    message = await ctx.send("react to play {} in {} \nid: {}".format(game, time, idx))
+    hour_multiplier = 3600
+
+    message = await ctx.send("react to play {} in {} hours \nmin_players {}\nid: {}".format(game, time, min_players, idx))
     idx_to_message[idx] = message
     #s.enter()
     # todo: Make canceling less garbage
-    print("entered waiting for {}".format(time))
-    await asyncio.sleep(time)
+    htime = int(time * hour_multiplier)
+    print("entered waiting for {} seconds ".format(htime))
+    await asyncio.sleep(htime)
     print('finsihed sleep')
     await notify(ctx, message.id)
 
@@ -106,7 +109,8 @@ async def is_valid_summon(m_id):
     del valid_mids
     return True
 
-bot.run(TOKEN)
+if __name__ == "__main__":
+    bot.run(TOKEN)
 '''
 @bot.command(name='summon')
 async def poll(ctx, game, time: int):
